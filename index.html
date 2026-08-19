@@ -23,16 +23,21 @@
 
     <section class="tools" aria-labelledby="tools-title">
       <h2 id="tools-title">ツール</h2>
-      <div class="tool-list">
-        <div class="tool-row disabled"><strong>かんたん割り勘</strong><span>準備中</span></div>
-        <a class="tool-row" href="#recipe"><strong>レシピ倍率変換</strong><span>使う →</span></a>
-        <div class="tool-row disabled"><strong>時給換算</strong><span>準備中</span></div>
-        <div class="tool-row disabled"><strong>今月もつ？</strong><span>準備中</span></div>
-        <a class="tool-row" href="#work-to-buy"><strong>何日働けば買える？</strong><span>使う →</span></a>
+      <label class="tool-search">
+        <span class="sr-only">ツールを検索</span>
+        <input id="tool-search" type="search" placeholder="ツールを検索（例：レシピ）" autocomplete="off">
+      </label>
+      <div class="tool-list" id="tool-list">
+        <div class="tool-row disabled" data-search="かんたん割り勘"><strong>かんたん割り勘</strong><span>準備中</span></div>
+        <a class="tool-row active" href="#recipe" data-tool-target="recipe" data-search="レシピ倍率変換"><strong>レシピ倍率変換</strong><span>表示中</span></a>
+        <div class="tool-row disabled" data-search="時給換算"><strong>時給換算</strong><span>準備中</span></div>
+        <div class="tool-row disabled" data-search="今月もつ"><strong>今月もつ？</strong><span>準備中</span></div>
+        <a class="tool-row" href="#work-to-buy" data-tool-target="work-to-buy" data-search="何日働けば買える"><strong>何日働けば買える？</strong><span>使う →</span></a>
       </div>
+      <p id="tool-search-empty" class="tool-search-empty" hidden>該当するツールはありません。</p>
     </section>
 
-    <section id="recipe" class="calculator">
+    <section id="recipe" class="calculator" data-calculator>
       <div class="section-title">
         <h2>レシピ倍率変換</h2>
         <p>元の人数と作りたい人数、材料を入力してください。</p>
@@ -70,7 +75,7 @@
       </section>
     </section>
 
-    <section id="work-to-buy" class="calculator">
+    <section id="work-to-buy" class="calculator" data-calculator hidden>
       <div class="section-title">
         <h2>何日働けば買える？</h2>
         <p>価格、時給、1日の労働時間を入力してください。</p>

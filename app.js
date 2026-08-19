@@ -1,3 +1,54 @@
+const toolSearch = document.querySelector('#tool-search');
+const toolRows = [...document.querySelectorAll('.tool-row')];
+const usableToolRows = [...document.querySelectorAll('[data-tool-target]')];
+const calculators = [...document.querySelectorAll('[data-calculator]')];
+const toolSearchEmpty = document.querySelector('#tool-search-empty');
+
+function showTool(toolId, shouldScroll = true) {
+  calculators.forEach((calculator) => {
+    calculator.hidden = calculator.id !== toolId;
+  });
+
+  usableToolRows.forEach((row) => {
+    const isActive = row.dataset.toolTarget === toolId;
+    row.classList.toggle('active', isActive);
+    row.querySelector('span').textContent = isActive ? '表示中' : '使う →';
+  });
+
+  if (shouldScroll) {
+    document.querySelector(`#${toolId}`)?.scrollIntoView({ block: 'start' });
+  }
+}
+
+usableToolRows.forEach((row) => {
+  row.addEventListener('click', (event) => {
+    event.preventDefault();
+    showTool(row.dataset.toolTarget);
+    history.replaceState(null, '', `#${row.dataset.toolTarget}`);
+  });
+});
+
+toolSearch.addEventListener('input', () => {
+  const query = toolSearch.value.trim().toLocaleLowerCase('ja');
+  let visibleCount = 0;
+
+  toolRows.forEach((row) => {
+    const searchableText = (row.dataset.search || row.textContent).toLocaleLowerCase('ja');
+    const matches = !query || searchableText.includes(query);
+    row.hidden = !matches;
+    if (matches) visibleCount += 1;
+  });
+
+  toolSearchEmpty.hidden = visibleCount !== 0;
+});
+
+const initialTool = location.hash.slice(1);
+if (calculators.some((calculator) => calculator.id === initialTool)) {
+  showTool(initialTool, false);
+} else {
+  showTool('recipe', false);
+}
+
 const ingredientList = document.querySelector('#ingredient-list');
 const addRowButton = document.querySelector('#add-row');
 const recipeForm = document.querySelector('#recipe-form');

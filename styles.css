@@ -44,6 +44,17 @@ h1, h2, h3, p { margin-top: 0; }
 
 .tools { padding-bottom: 72px; }
 h2 { margin-bottom: 14px; font-size: 20px; letter-spacing: -.03em; }
+.tool-search { display: block; margin-bottom: 10px; }
+.tool-search input {
+  width: 100%;
+  height: 44px;
+  padding: 0 11px;
+  border: 1px solid #bbb;
+  border-radius: 0;
+  outline: 0;
+  background: #fff;
+}
+.tool-search input:focus { border-color: var(--text); }
 .tool-list { border-top: 1px solid var(--line); }
 .tool-row {
   min-height: 54px;
@@ -56,11 +67,26 @@ h2 { margin-bottom: 14px; font-size: 20px; letter-spacing: -.03em; }
   text-decoration: none;
 }
 a.tool-row:hover strong { text-decoration: underline; text-underline-offset: 3px; }
+a.tool-row.active strong { text-decoration: underline; text-underline-offset: 3px; }
 .tool-row span { color: var(--accent); font-size: 13px; }
+.tool-row[hidden] { display: none; }
 .tool-row.disabled { color: #999; }
 .tool-row.disabled span { color: #aaa; }
+.tool-search-empty { margin: 12px 4px 0; color: var(--sub); font-size: 13px; }
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 
 .calculator { padding: 56px 0 80px; border-top: 1px solid var(--line); }
+.calculator[hidden] { display: none; }
 .section-title { margin-bottom: 28px; }
 .section-title h2 { margin-bottom: 5px; font-size: 28px; }
 .section-title p { margin-bottom: 0; color: var(--sub); font-size: 14px; }
