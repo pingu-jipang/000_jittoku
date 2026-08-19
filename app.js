@@ -141,3 +141,33 @@ copyResultButton.addEventListener('click', async () => {
     copyStatus.textContent = 'コピーできませんでした。結果を選択してコピーしてください。';
   }
 });
+
+
+const workToBuyForm = document.querySelector('#work-to-buy-form');
+const workResult = document.querySelector('#work-result');
+const workResultText = document.querySelector('#work-result-text');
+
+function formatWorkAmount(value) {
+  const rounded = Math.round((value + Number.EPSILON) * 10) / 10;
+  return new Intl.NumberFormat('ja-JP', { maximumFractionDigits: 1 }).format(rounded);
+}
+
+workToBuyForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+
+  const price = Number(document.querySelector('#item-price').value);
+  const hourlyWage = Number(document.querySelector('#hourly-wage').value);
+  const dailyHours = Number(document.querySelector('#daily-hours').value);
+
+  if (!(price > 0) || !(hourlyWage > 0) || !(dailyHours > 0)) {
+    alert('価格、時給、1日の労働時間は0より大きい数字を入力してください。');
+    return;
+  }
+
+  const requiredHours = price / hourlyWage;
+  const requiredDays = requiredHours / dailyHours;
+
+  workResultText.textContent = `約${formatWorkAmount(requiredHours)}時間、約${formatWorkAmount(requiredDays)}日分働く必要があります。`;
+  workResult.hidden = false;
+  workResult.scrollIntoView({ block: 'nearest' });
+});

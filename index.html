@@ -28,7 +28,7 @@
         <a class="tool-row" href="#recipe"><strong>レシピ倍率変換</strong><span>使う →</span></a>
         <div class="tool-row disabled"><strong>時給換算</strong><span>準備中</span></div>
         <div class="tool-row disabled"><strong>今月もつ？</strong><span>準備中</span></div>
-        <div class="tool-row disabled"><strong>何日働けば買える？</strong><span>準備中</span></div>
+        <a class="tool-row" href="#work-to-buy"><strong>何日働けば買える？</strong><span>使う →</span></a>
       </div>
     </section>
 
@@ -67,6 +67,36 @@
           <button id="copy-result" class="copy" type="button">コピー</button>
           <span id="copy-status" aria-live="polite"></span>
         </div>
+      </section>
+    </section>
+
+    <section id="work-to-buy" class="calculator">
+      <div class="section-title">
+        <h2>何日働けば買える？</h2>
+        <p>価格、時給、1日の労働時間を入力してください。</p>
+      </div>
+
+      <form id="work-to-buy-form">
+        <div class="work-fields">
+          <label>
+            <span>欲しいものの価格</span>
+            <div class="unit-input"><input id="item-price" type="number" min="1" step="1" value="54000" required><span>円</span></div>
+          </label>
+          <label>
+            <span>時給</span>
+            <div class="unit-input"><input id="hourly-wage" type="number" min="1" step="1" value="1300" required><span>円</span></div>
+          </label>
+          <label>
+            <span>1日の労働時間</span>
+            <div class="unit-input"><input id="daily-hours" type="number" min="0.1" step="0.1" value="8" required><span>時間</span></div>
+          </label>
+        </div>
+        <button class="submit" type="submit">計算する</button>
+      </form>
+
+      <section id="work-result" class="result" hidden aria-live="polite">
+        <h3>この商品を買うには</h3>
+        <p id="work-result-text" class="answer-text"></p>
       </section>
     </section>
   </main>

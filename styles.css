@@ -159,10 +159,26 @@ label > span { display: block; margin-bottom: 6px; }
 footer { border-top: 1px solid var(--line); color: var(--sub); font-size: 12px; }
 footer .wrap { min-height: 64px; display: flex; align-items: center; }
 
+
+
+.work-fields {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.answer-text {
+  margin-bottom: 0;
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
 @media (max-width: 520px) {
   .topbar span { display: none; }
   .intro { padding: 48px 0 44px; }
   .tools { padding-bottom: 56px; }
   .calculator { padding: 44px 0 64px; }
   .ingredient-row { grid-template-columns: 1fr .65fr .65fr 32px; }
+  .work-fields { grid-template-columns: 1fr; }
 }
