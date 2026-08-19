@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="現在の口座残高と今後の給料・カード・家賃などを入力し、今月お金が足りるか、残高不足になる日と最低必要額を無料で計算します。">
+  <meta name="robots" content="index,follow">
+  <title>今月お金足りる？残高不足になる日を計算｜ジットク</title>
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <header><div class="wrap topbar"><a class="logo" href="../">ジットク</a><span>電卓はめんどう、Excelはおおげさ。</span></div></header>
+  <main class="wrap tool-page">
+    <a class="back-link" href="../">← ツール一覧</a>
+    <section class="tools" aria-labelledby="tools-title">
+      <h2 id="tools-title">ツール</h2>
+      <label class="tool-search"><span class="sr-only">ツールを検索</span><input id="tool-search" type="search" placeholder="ツールを検索（例：レシピ）" autocomplete="off"></label>
+      <div class="tool-list"><a class="tool-row" href="../warikan/" data-search="かんたん割り勘 精算 飲み会 立替 1次会 2次会 参加者"><strong>かんたん割り勘</strong><span>使う →</span></a>
+        <a class="tool-row" href="../recipe/" data-search="レシピ倍率変換 料理 人数 食材 分量 何人前"><strong>レシピ倍率変換</strong><span>使う →</span></a>
+        <a class="tool-row" href="../hourly-wage/" data-search="時給換算 給料 月給 手取り 労働時間 実質時給"><strong>時給換算</strong><span>使う →</span></a>
+        <a class="tool-row current" href="../cashflow/" data-search="今月お金足りる お金 足りる 今月もつ 口座 残高 家計 給料 カード 家賃 支払い"><strong>今月お金足りる？</strong><span>表示中</span></a>
+        <a class="tool-row" href="../work-to-buy/" data-search="何日働けば買える 価格 時給 労働 欲しいもの 買える"><strong>何日働けば買える？</strong><span>使う →</span></a></div>
+      <p id="tool-search-empty" class="tool-search-empty" hidden>該当するツールはありません。</p>
+    </section>
+    
+    <section class="calculator">
+      <div class="section-title"><h1>今月お金足りる？</h1><p>現在の残高と、今後の給料・カード・家賃などを入れて、残高不足になる日と不足額を確認します。</p></div>
+      <form id="month-survival-form">
+        <div class="field-grid two-col">
+          <label><span>対象月</span><input id="cash-month" class="text-input" type="month" required></label>
+          <label><span>現在の残高</span><div class="unit-input"><input id="current-balance" type="number" step="1" inputmode="numeric" value="100000" required><span>円</span></div></label>
+        </div>
+        <div class="ingredients-title cash-heading"><strong>今後の入出金予定</strong><button id="add-cashflow" class="link-button" type="button">＋ 予定を追加</button></div>
+        <div class="cashflow-table" aria-label="今後の入出金予定"><div class="cashflow-header" aria-hidden="true"><span>日</span><span>名称</span><span>＋/−</span><span>金額</span><span></span></div><div id="cashflow-list" class="cashflow-list"></div></div>
+        <p class="hint">例：20 / 給料 / ＋ / 250000　　27 / カード / − / 150000</p>
+        <button class="submit" type="submit">確認する</button>
+      </form>
+      <section id="cash-result" class="result" hidden aria-live="polite"><h3 id="cash-result-title"></h3><p id="cash-result-summary" class="answer-text"></p><div id="cash-result-list" class="cash-result-list"></div></section>
+    </section>
+    <section class="seo-copy" aria-label="このツールについて"><h2>こんなときに</h2><p>家計簿のように過去の支出を記録するツールではありません。今わかっている入出金だけを日付順に並べて、「この先、口座のお金が足りるか」だけを確認します。</p></section>
+  </main>
+  <footer><div class="wrap">ジットク</div></footer>
+  <script src="../app.js" defer></script>
+</body>
+</html>

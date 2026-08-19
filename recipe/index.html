@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="4人前を3人前、2人前を5人前など、レシピの人数変更に合わせて材料の分量を一括変換。分数入力にも対応した無料計算ツールです。">
+  <meta name="robots" content="index,follow">
+  <title>レシピの人数・分量を自動計算｜ジットク</title>
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <header><div class="wrap topbar"><a class="logo" href="../">ジットク</a><span>電卓はめんどう、Excelはおおげさ。</span></div></header>
+  <main class="wrap tool-page">
+    <a class="back-link" href="../">← ツール一覧</a>
+    <section class="tools" aria-labelledby="tools-title">
+      <h2 id="tools-title">ツール</h2>
+      <label class="tool-search"><span class="sr-only">ツールを検索</span><input id="tool-search" type="search" placeholder="ツールを検索（例：レシピ）" autocomplete="off"></label>
+      <div class="tool-list"><a class="tool-row" href="../warikan/" data-search="かんたん割り勘 精算 飲み会 立替 1次会 2次会 参加者"><strong>かんたん割り勘</strong><span>使う →</span></a>
+        <a class="tool-row current" href="../recipe/" data-search="レシピ倍率変換 料理 人数 食材 分量 何人前"><strong>レシピ倍率変換</strong><span>表示中</span></a>
+        <a class="tool-row" href="../hourly-wage/" data-search="時給換算 給料 月給 手取り 労働時間 実質時給"><strong>時給換算</strong><span>使う →</span></a>
+        <a class="tool-row" href="../cashflow/" data-search="今月お金足りる お金 足りる 今月もつ 口座 残高 家計 給料 カード 家賃 支払い"><strong>今月お金足りる？</strong><span>使う →</span></a>
+        <a class="tool-row" href="../work-to-buy/" data-search="何日働けば買える 価格 時給 労働 欲しいもの 買える"><strong>何日働けば買える？</strong><span>使う →</span></a></div>
+      <p id="tool-search-empty" class="tool-search-empty" hidden>該当するツールはありません。</p>
+    </section>
+    
+    <section class="calculator">
+      <div class="section-title">
+        <h1>レシピ倍率変換</h1>
+        <p>4人前を3人前にするなど、レシピの人数を変えたときの材料の分量をまとめて計算します。</p>
+      </div>
+      <form id="recipe-form">
+        <div class="servings">
+          <label><span>元のレシピ</span><div class="unit-input"><input id="original-servings" type="number" min="0.1" step="0.1" inputmode="decimal" value="4" required><span>人前</span></div></label>
+          <span class="to">→</span>
+          <label><span>作りたい量</span><div class="unit-input"><input id="target-servings" type="number" min="0.1" step="0.1" inputmode="decimal" value="2" required><span>人前</span></div></label>
+        </div>
+        <div class="ingredients-title"><strong>材料</strong><button id="add-row" class="link-button" type="button">＋ 追加</button></div>
+        <div id="ingredient-list" class="ingredient-list"></div>
+        <p class="hint">数量は 300 / 0.5 / 1/2 のように入力できます。</p>
+        <button class="submit" type="submit">変換する</button>
+      </form>
+      <section id="result" class="result" hidden aria-live="polite"><h3 id="result-title"></h3><div id="result-list"></div><div class="result-actions"><button id="copy-result" class="copy" type="button">コピー</button><span id="copy-status" aria-live="polite"></span></div></section>
+    </section>
+    <section class="seo-copy" aria-label="このツールについて"><h2>こんなときに</h2><p>「4人前のレシピを3人前にしたい」とき、材料ごとに電卓を叩く必要はありません。元の人数・作りたい人数・材料を入れるだけで、すべて同じ倍率で変換します。</p></section>
+  </main>
+  <footer><div class="wrap">ジットク</div></footer>
+  <script src="../app.js" defer></script>
+</body>
+</html>

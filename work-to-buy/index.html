@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="欲しいものの価格、時給、1日の労働時間から、その商品を買うために必要な労働時間と労働日数を無料で計算します。">
+  <meta name="robots" content="index,follow">
+  <title>何日働けば買える？価格を労働時間・日数に換算｜ジットク</title>
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <header><div class="wrap topbar"><a class="logo" href="../">ジットク</a><span>電卓はめんどう、Excelはおおげさ。</span></div></header>
+  <main class="wrap tool-page">
+    <a class="back-link" href="../">← ツール一覧</a>
+    <section class="tools" aria-labelledby="tools-title">
+      <h2 id="tools-title">ツール</h2>
+      <label class="tool-search"><span class="sr-only">ツールを検索</span><input id="tool-search" type="search" placeholder="ツールを検索（例：レシピ）" autocomplete="off"></label>
+      <div class="tool-list"><a class="tool-row" href="../warikan/" data-search="かんたん割り勘 精算 飲み会 立替 1次会 2次会 参加者"><strong>かんたん割り勘</strong><span>使う →</span></a>
+        <a class="tool-row" href="../recipe/" data-search="レシピ倍率変換 料理 人数 食材 分量 何人前"><strong>レシピ倍率変換</strong><span>使う →</span></a>
+        <a class="tool-row" href="../hourly-wage/" data-search="時給換算 給料 月給 手取り 労働時間 実質時給"><strong>時給換算</strong><span>使う →</span></a>
+        <a class="tool-row" href="../cashflow/" data-search="今月お金足りる お金 足りる 今月もつ 口座 残高 家計 給料 カード 家賃 支払い"><strong>今月お金足りる？</strong><span>使う →</span></a>
+        <a class="tool-row current" href="../work-to-buy/" data-search="何日働けば買える 価格 時給 労働 欲しいもの 買える"><strong>何日働けば買える？</strong><span>表示中</span></a></div>
+      <p id="tool-search-empty" class="tool-search-empty" hidden>該当するツールはありません。</p>
+    </section>
+    
+    <section class="calculator">
+      <div class="section-title"><h1>何日働けば買える？</h1><p>欲しいものの価格と時給から、その商品が何時間・何日分の労働に相当するか計算します。</p></div>
+      <form id="work-to-buy-form">
+        <div class="work-fields">
+          <label><span>欲しいものの価格</span><div class="unit-input"><input id="item-price" type="number" min="1" step="1" inputmode="numeric" value="54000" required><span>円</span></div></label>
+          <label><span>時給</span><div class="unit-input"><input id="hourly-wage-input" type="number" min="1" step="1" inputmode="numeric" value="1300" required><span>円</span></div></label>
+          <label><span>1日の労働時間</span><div class="unit-input"><input id="daily-hours" type="number" min="0.1" step="0.1" inputmode="decimal" value="8" required><span>時間</span></div></label>
+        </div>
+        <button class="submit" type="submit">計算する</button>
+      </form>
+      <section id="work-result" class="result" hidden aria-live="polite"><h3>この商品を買うには</h3><p id="work-result-text" class="answer-text"></p></section>
+    </section>
+    <section class="seo-copy" aria-label="このツールについて"><h2>こんなときに</h2><p>値札を円だけで見るのではなく、「自分の何時間分・何日分の労働か」に置き換えて考えるための計算です。買うか迷っているものの感覚をつかみたいときに使えます。</p></section>
+  </main>
+  <footer><div class="wrap">ジットク</div></footer>
+  <script src="../app.js" defer></script>
+</body>
+</html>

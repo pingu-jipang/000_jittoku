@@ -3,215 +3,30 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="ジットク - 電卓では面倒、Excelでは大げさな日常の計算をすぐ終わらせる無料Webツール集">
+  <meta name="description" content="電卓では面倒、Excelでは大げさな日常の計算を、入力するだけですぐ終わらせる無料Webツール集。割り勘、レシピ倍率、実質時給、今月の残高、必要労働日数を計算できます。">
+  <meta name="robots" content="index,follow">
   <title>ジットク｜ちょっとした計算を、すぐ終わらせる。</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header>
-    <div class="wrap topbar">
-      <a class="logo" href="#top">ジットク</a>
-      <span>電卓はめんどう、Excelはおおげさ。</span>
-    </div>
-  </header>
-
-  <main id="top" class="wrap">
+  <header><div class="wrap topbar"><a class="logo" href="./">ジットク</a><span>電卓はめんどう、Excelはおおげさ。</span></div></header>
+  <main class="wrap">
     <section class="intro">
       <h1>ちょっとした計算を、<br>すぐ終わらせる。</h1>
       <p>知りたいことを入れるだけ。計算式は考えなくていい。</p>
     </section>
-
     <section class="tools" aria-labelledby="tools-title">
       <h2 id="tools-title">ツール</h2>
-      <label class="tool-search">
-        <span class="sr-only">ツールを検索</span>
-        <input id="tool-search" type="search" placeholder="ツールを検索（例：レシピ）" autocomplete="off">
-      </label>
-      <div class="tool-list" id="tool-list">
-        <a class="tool-row active" href="#split-bill" data-tool-target="split-bill" data-search="かんたん割り勘 精算 飲み会 立替"><strong>かんたん割り勘</strong><span>表示中</span></a>
-        <a class="tool-row" href="#recipe" data-tool-target="recipe" data-search="レシピ倍率変換 料理 人数 食材"><strong>レシピ倍率変換</strong><span>使う →</span></a>
-        <a class="tool-row" href="#hourly-wage" data-tool-target="hourly-wage" data-search="時給換算 給料 月給 手取り 労働時間"><strong>時給換算</strong><span>使う →</span></a>
-        <a class="tool-row" href="#month-survival" data-tool-target="month-survival" data-search="今月お金足りる お金 足りる 今月もつ 口座 残高 家計 給料 カード 家賃 支払い"><strong>今月お金足りる？</strong><span>使う →</span></a>
-        <a class="tool-row" href="#work-to-buy" data-tool-target="work-to-buy" data-search="何日働けば買える 価格 時給 労働 欲しいもの"><strong>何日働けば買える？</strong><span>使う →</span></a>
-      </div>
+      <label class="tool-search"><span class="sr-only">ツールを検索</span><input id="tool-search" type="search" placeholder="ツールを検索（例：レシピ）" autocomplete="off"></label>
+      <div class="tool-list"><a class="tool-row" href="./warikan/" data-search="かんたん割り勘 精算 飲み会 立替 1次会 2次会 参加者"><strong>かんたん割り勘</strong><span>使う →</span></a>
+        <a class="tool-row" href="./recipe/" data-search="レシピ倍率変換 料理 人数 食材 分量 何人前"><strong>レシピ倍率変換</strong><span>使う →</span></a>
+        <a class="tool-row" href="./hourly-wage/" data-search="時給換算 給料 月給 手取り 労働時間 実質時給"><strong>時給換算</strong><span>使う →</span></a>
+        <a class="tool-row" href="./cashflow/" data-search="今月お金足りる お金 足りる 今月もつ 口座 残高 家計 給料 カード 家賃 支払い"><strong>今月お金足りる？</strong><span>使う →</span></a>
+        <a class="tool-row" href="./work-to-buy/" data-search="何日働けば買える 価格 時給 労働 欲しいもの 買える"><strong>何日働けば買える？</strong><span>使う →</span></a></div>
       <p id="tool-search-empty" class="tool-search-empty" hidden>該当するツールはありません。</p>
-    </section>
-
-    <section id="split-bill" class="calculator" data-calculator>
-      <div class="section-title">
-        <h2>かんたん割り勘</h2>
-        <p>複数の会と立替をまとめて、最後に誰が誰へ払えばいいか計算します。</p>
-      </div>
-
-      <form id="split-bill-form">
-        <label class="block-field">
-          <span>参加者</span>
-          <input id="split-participants" class="text-input" type="text" value="Aさん, Bさん, Cさん" autocomplete="off">
-        </label>
-        <div class="inline-action">
-          <p class="hint">カンマ区切りで入力してください。</p>
-          <button id="apply-participants" class="link-button" type="button">参加者を反映</button>
-        </div>
-
-        <div class="ingredients-title party-heading">
-          <strong>会</strong>
-          <button id="add-party" class="link-button" type="button">＋ 会を追加</button>
-        </div>
-        <div id="party-list" class="party-list"></div>
-        <button class="submit" type="submit">精算する</button>
-      </form>
-
-      <section id="split-result" class="result" hidden aria-live="polite">
-        <h3>これだけ支払えば精算完了です。</h3>
-        <div id="split-result-list"></div>
-        <p id="split-result-note" class="hint result-note"></p>
-      </section>
-    </section>
-
-    <section id="recipe" class="calculator" data-calculator hidden>
-      <div class="section-title">
-        <h2>レシピ倍率変換</h2>
-        <p>元の人数と作りたい人数、材料を入力してください。</p>
-      </div>
-
-      <form id="recipe-form">
-        <div class="servings">
-          <label>
-            <span>元のレシピ</span>
-            <div class="unit-input"><input id="original-servings" type="number" min="0.1" step="0.1" value="4" required><span>人前</span></div>
-          </label>
-          <span class="to">→</span>
-          <label>
-            <span>作りたい量</span>
-            <div class="unit-input"><input id="target-servings" type="number" min="0.1" step="0.1" value="2" required><span>人前</span></div>
-          </label>
-        </div>
-
-        <div class="ingredients-title">
-          <strong>材料</strong>
-          <button id="add-row" class="link-button" type="button">＋ 追加</button>
-        </div>
-        <div id="ingredient-list" class="ingredient-list"></div>
-        <p class="hint">数量は 300 / 0.5 / 1/2 のように入力できます。</p>
-        <button class="submit" type="submit">変換する</button>
-      </form>
-
-      <section id="result" class="result" hidden aria-live="polite">
-        <h3 id="result-title"></h3>
-        <div id="result-list"></div>
-        <div class="result-actions">
-          <button id="copy-result" class="copy" type="button">コピー</button>
-          <span id="copy-status" aria-live="polite"></span>
-        </div>
-      </section>
-    </section>
-
-    <section id="hourly-wage" class="calculator" data-calculator hidden>
-      <div class="section-title">
-        <h2>時給換算</h2>
-        <p>手取り額を、実際に働いた時間あたりの金額に換算します。</p>
-      </div>
-
-      <form id="hourly-wage-form">
-        <div class="field-grid two-col">
-          <label>
-            <span>対象月</span>
-            <input id="wage-month" class="text-input" type="month" required>
-          </label>
-          <label>
-            <span>1日の労働時間</span>
-            <div class="unit-input"><input id="wage-daily-hours" type="number" min="0.1" step="0.1" value="8" required><span>時間</span></div>
-          </label>
-          <label>
-            <span>勤務日数</span>
-            <div class="unit-input"><input id="wage-workdays" type="number" min="1" step="1" required><span>日</span></div>
-          </label>
-          <label>
-            <span>手取り額</span>
-            <div class="unit-input"><input id="wage-takehome" type="number" min="1" step="1" value="250000" required><span>円</span></div>
-          </label>
-        </div>
-        <p class="hint">勤務日数は対象月の月〜金の日数を初期値にしています。実態に合わせて変更できます。</p>
-        <button class="submit" type="submit">計算する</button>
-      </form>
-
-      <section id="hourly-wage-result" class="result" hidden aria-live="polite">
-        <h3>あなたの実質時給は</h3>
-        <p id="hourly-wage-answer" class="answer-big"></p>
-        <p id="hourly-wage-detail" class="answer-detail"></p>
-      </section>
-    </section>
-
-    <section id="month-survival" class="calculator" data-calculator hidden>
-      <div class="section-title">
-        <h2>今月お金足りる？</h2>
-        <p>現在の残高と、これから分かっている入出金だけで今月を乗り切れるか確認します。</p>
-      </div>
-
-      <form id="month-survival-form">
-        <div class="field-grid two-col">
-          <label>
-            <span>対象月</span>
-            <input id="cash-month" class="text-input" type="month" required>
-          </label>
-          <label>
-            <span>現在の残高</span>
-            <div class="unit-input"><input id="current-balance" type="number" step="1" value="100000" required><span>円</span></div>
-          </label>
-        </div>
-
-        <div class="ingredients-title cash-heading">
-          <strong>今後の入出金予定</strong>
-          <button id="add-cashflow" class="link-button" type="button">＋ 予定を追加</button>
-        </div>
-        <div class="cashflow-table" aria-label="今後の入出金予定">
-          <div class="cashflow-header" aria-hidden="true">
-            <span>日</span><span>名称</span><span>＋/−</span><span>金額</span><span></span>
-          </div>
-          <div id="cashflow-list" class="cashflow-list"></div>
-        </div>
-        <p class="hint">例：20 / 給料 / ＋ / 250000　　27 / カード / − / 150000</p>
-        <button class="submit" type="submit">確認する</button>
-      </form>
-
-      <section id="cash-result" class="result" hidden aria-live="polite">
-        <h3 id="cash-result-title"></h3>
-        <p id="cash-result-summary" class="answer-text"></p>
-        <div id="cash-result-list" class="cash-result-list"></div>
-      </section>
-    </section>
-
-    <section id="work-to-buy" class="calculator" data-calculator hidden>
-      <div class="section-title">
-        <h2>何日働けば買える？</h2>
-        <p>価格、時給、1日の労働時間を入力してください。</p>
-      </div>
-
-      <form id="work-to-buy-form">
-        <div class="work-fields">
-          <label>
-            <span>欲しいものの価格</span>
-            <div class="unit-input"><input id="item-price" type="number" min="1" step="1" value="54000" required><span>円</span></div>
-          </label>
-          <label>
-            <span>時給</span>
-            <div class="unit-input"><input id="hourly-wage-input" type="number" min="1" step="1" value="1300" required><span>円</span></div>
-          </label>
-          <label>
-            <span>1日の労働時間</span>
-            <div class="unit-input"><input id="daily-hours" type="number" min="0.1" step="0.1" value="8" required><span>時間</span></div>
-          </label>
-        </div>
-        <button class="submit" type="submit">計算する</button>
-      </form>
-
-      <section id="work-result" class="result" hidden aria-live="polite">
-        <h3>この商品を買うには</h3>
-        <p id="work-result-text" class="answer-text"></p>
-      </section>
+      <p class="home-note">ツールを選ぶと、その計算だけのページが開きます。</p>
     </section>
   </main>
-
   <footer><div class="wrap">ジットク</div></footer>
   <script src="app.js" defer></script>
 </body>
