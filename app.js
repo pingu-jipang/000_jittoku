@@ -1,3 +1,27 @@
+const yen = new Intl.NumberFormat('ja-JP', { maximumFractionDigits: 0 });
+const oneDecimal = new Intl.NumberFormat('ja-JP', { maximumFractionDigits: 1 });
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function currentMonthValue() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+}
+
+function monthDate(monthValue, day) {
+  const [year, month] = monthValue.split('-').map(Number);
+  const lastDay = new Date(year, month, 0).getDate();
+  return `${monthValue}-${String(Math.min(day, lastDay)).padStart(2, '0')}`;
+}
+
+// ---------- tool navigation ----------
 const toolSearch = document.querySelector('#tool-search');
 const toolRows = [...document.querySelectorAll('.tool-row')];
 const usableToolRows = [...document.querySelectorAll('[data-tool-target]')];
@@ -46,9 +70,203 @@ const initialTool = location.hash.slice(1);
 if (calculators.some((calculator) => calculator.id === initialTool)) {
   showTool(initialTool, false);
 } else {
-  showTool('recipe', false);
+  showTool('split-bill', false);
 }
 
+// ---------- 1. split bill ----------
+const splitForm = document.querySelector('#split-bill-form');
+const splitParticipantsInput = document.querySelector('#split-participants');
+const applyParticipantsButton = document.querySelector('#apply-participants');
+const addPartyButton = document.querySelector('#add-party');
+const partyList = document.querySelector('#party-list');
+const splitResult = document.querySelector('#split-result');
+const splitResultList = document.querySelector('#split-result-list');
+const splitResultNote = document.querySelector('#split-result-note');
+
+let splitParticipants = ['Aさん', 'Bさん', 'Cさん'];
+let partyCounter = 0;
+
+function parseParticipantNames() {
+  const names = splitParticipantsInput.value
+    .split(/[、,，]/)
+    .map((name) => name.trim())
+    .filter(Boolean);
+  return [...new Set(names)];
+}
+
+function getPartyData(card) {
+  return {
+    name: card.querySelector('.party-name').value,
+    total: card.querySelector('.party-total').value,
+    payer: card.querySelector('.party-payer').value,
+    participants: [...card.querySelectorAll('.party-participant:checked')].map((input) => input.value),
+  };
+}
+
+function createPartyCard(data = {}) {
+  partyCounter += 1;
+  const card = document.createElement('div');
+  card.className = 'party-card';
+
+  const selectedParticipants = data.participants?.length ? data.participants : [...splitParticipants];
+  const payer = splitParticipants.includes(data.payer) ? data.payer : splitParticipants[0] || '';
+  const defaultName = data.name || `${partyCounter}次会`;
+
+  card.innerHTML = `
+    <div class="party-card-head">
+      <label>
+        <span>会の名前</span>
+        <input class="party-name text-input" type="text" value="${escapeHtml(defaultName)}" placeholder="1次会">
+      </label>
+      <label>
+        <span>合計金額</span>
+        <div class="unit-input"><input class="party-total" type="number" min="0" step="1" value="${escapeHtml(data.total ?? '')}" placeholder="12000"><span>円</span></div>
+      </label>
+      <button class="remove-party" type="button" aria-label="この会を削除">×</button>
+    </div>
+    <div class="party-card-body">
+      <label>
+        <span>立替者</span>
+        <select class="party-payer">
+          ${splitParticipants.map((name) => `<option value="${escapeHtml(name)}" ${name === payer ? 'selected' : ''}>${escapeHtml(name)}</option>`).join('')}
+        </select>
+      </label>
+      <div>
+        <span class="field-label">参加した人</span>
+        <div class="party-participants">
+          ${splitParticipants.map((name) => `
+            <label><input class="party-participant" type="checkbox" value="${escapeHtml(name)}" ${selectedParticipants.includes(name) ? 'checked' : ''}>${escapeHtml(name)}</label>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+
+  card.querySelector('.remove-party').addEventListener('click', () => {
+    if (partyList.children.length > 1) card.remove();
+  });
+
+  partyList.appendChild(card);
+}
+
+function applySplitParticipants() {
+  const names = parseParticipantNames();
+  if (names.length < 2) {
+    alert('参加者を2人以上入力してください。');
+    return false;
+  }
+
+  const existing = [...partyList.querySelectorAll('.party-card')].map(getPartyData);
+  splitParticipants = names;
+  partyList.innerHTML = '';
+  partyCounter = 0;
+
+  if (existing.length) {
+    existing.forEach((data) => {
+      const kept = data.participants.filter((name) => names.includes(name));
+      createPartyCard({
+        ...data,
+        payer: names.includes(data.payer) ? data.payer : names[0],
+        participants: kept.length ? kept : [...names],
+      });
+    });
+  } else {
+    createPartyCard();
+  }
+
+  return true;
+}
+
+applyParticipantsButton.addEventListener('click', applySplitParticipants);
+addPartyButton.addEventListener('click', () => createPartyCard());
+
+createPartyCard({ name: '1次会', total: '12000', payer: 'Aさん', participants: ['Aさん', 'Bさん', 'Cさん'] });
+createPartyCard({ name: '2次会', total: '6000', payer: 'Bさん', participants: ['Aさん', 'Bさん'] });
+
+splitForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+
+  const typedNames = parseParticipantNames();
+  if (typedNames.join('\n') !== splitParticipants.join('\n')) {
+    if (!applySplitParticipants()) return;
+  }
+
+  const parties = [...partyList.querySelectorAll('.party-card')].map(getPartyData);
+  if (!parties.length) {
+    alert('会を1つ以上入力してください。');
+    return;
+  }
+
+  const balances = Object.fromEntries(splitParticipants.map((name) => [name, 0]));
+  let hadRounding = false;
+
+  for (const party of parties) {
+    const total = Math.round(Number(party.total));
+    if (!(total > 0)) {
+      alert(`${party.name || '会'}の合計金額を入力してください。`);
+      return;
+    }
+    if (!party.payer) {
+      alert(`${party.name || '会'}の立替者を選んでください。`);
+      return;
+    }
+    if (!party.participants.length) {
+      alert(`${party.name || '会'}の参加者を1人以上選んでください。`);
+      return;
+    }
+
+    balances[party.payer] += total;
+    const baseShare = Math.floor(total / party.participants.length);
+    const remainder = total - baseShare * party.participants.length;
+    if (remainder !== 0) hadRounding = true;
+
+    party.participants.forEach((name, index) => {
+      balances[name] -= baseShare + (index < remainder ? 1 : 0);
+    });
+  }
+
+  const debtors = splitParticipants
+    .map((name) => ({ name, amount: -balances[name] }))
+    .filter((person) => person.amount > 0);
+  const creditors = splitParticipants
+    .map((name) => ({ name, amount: balances[name] }))
+    .filter((person) => person.amount > 0);
+
+  const payments = [];
+  let d = 0;
+  let c = 0;
+  while (d < debtors.length && c < creditors.length) {
+    const amount = Math.min(debtors[d].amount, creditors[c].amount);
+    if (amount > 0) {
+      payments.push({ from: debtors[d].name, to: creditors[c].name, amount });
+      debtors[d].amount -= amount;
+      creditors[c].amount -= amount;
+    }
+    if (debtors[d].amount === 0) d += 1;
+    if (creditors[c].amount === 0) c += 1;
+  }
+
+  splitResultList.innerHTML = '';
+  if (!payments.length) {
+    const row = document.createElement('div');
+    row.className = 'result-item';
+    row.innerHTML = '<span>追加の支払いはありません。</span><strong>精算済み</strong>';
+    splitResultList.appendChild(row);
+  } else {
+    payments.forEach((payment) => {
+      const row = document.createElement('div');
+      row.className = 'result-item';
+      row.innerHTML = `<span>${escapeHtml(payment.from)} → ${escapeHtml(payment.to)}</span><strong>${yen.format(payment.amount)}円</strong>`;
+      splitResultList.appendChild(row);
+    });
+  }
+
+  splitResultNote.textContent = hadRounding ? '割り切れない金額は、各会の参加者順で1円ずつ調整しています。' : '';
+  splitResult.hidden = false;
+  splitResult.scrollIntoView({ block: 'nearest' });
+});
+
+// ---------- 2. recipe scaling ----------
 const ingredientList = document.querySelector('#ingredient-list');
 const addRowButton = document.querySelector('#add-row');
 const recipeForm = document.querySelector('#recipe-form');
@@ -81,20 +299,10 @@ function createIngredientRow(data = { name: '', quantity: '', unit: '' }) {
   ingredientList.appendChild(row);
 }
 
-function escapeHtml(value) {
-  return String(value)
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;');
-}
-
 function parseQuantity(raw) {
   const value = raw.trim();
   if (!value) return NaN;
 
-  // "1/2" のような単純な分数を許可
   const fraction = value.match(/^(-?\d+(?:\.\d+)?)\s*\/\s*(-?\d+(?:\.\d+)?)$/);
   if (fraction) {
     const numerator = Number(fraction[1]);
@@ -107,8 +315,6 @@ function parseQuantity(raw) {
 
 function formatQuantity(value) {
   const rounded = Math.round((value + Number.EPSILON) * 100) / 100;
-
-  // 料理で見やすい代表的な分数だけ分数表記に戻す
   const whole = Math.trunc(rounded);
   const decimal = Math.abs(rounded - whole);
   const fractionMap = [
@@ -135,7 +341,6 @@ function getIngredients() {
 }
 
 addRowButton.addEventListener('click', () => createIngredientRow());
-
 defaults.forEach(createIngredientRow);
 
 recipeForm.addEventListener('submit', (event) => {
@@ -193,7 +398,179 @@ copyResultButton.addEventListener('click', async () => {
   }
 });
 
+// ---------- 3. hourly wage ----------
+const wageForm = document.querySelector('#hourly-wage-form');
+const wageMonth = document.querySelector('#wage-month');
+const wageWorkdays = document.querySelector('#wage-workdays');
+const hourlyWageResult = document.querySelector('#hourly-wage-result');
+const hourlyWageAnswer = document.querySelector('#hourly-wage-answer');
+const hourlyWageDetail = document.querySelector('#hourly-wage-detail');
 
+function countWeekdays(monthValue) {
+  const [year, month] = monthValue.split('-').map(Number);
+  const lastDay = new Date(year, month, 0).getDate();
+  let count = 0;
+  for (let day = 1; day <= lastDay; day += 1) {
+    const weekday = new Date(year, month - 1, day).getDay();
+    if (weekday !== 0 && weekday !== 6) count += 1;
+  }
+  return count;
+}
+
+wageMonth.value = currentMonthValue();
+wageWorkdays.value = countWeekdays(wageMonth.value);
+wageMonth.addEventListener('change', () => {
+  wageWorkdays.value = countWeekdays(wageMonth.value);
+});
+
+wageForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const dailyHours = Number(document.querySelector('#wage-daily-hours').value);
+  const workdays = Number(wageWorkdays.value);
+  const takehome = Number(document.querySelector('#wage-takehome').value);
+
+  if (!(dailyHours > 0) || !(workdays > 0) || !(takehome > 0)) {
+    alert('労働時間、勤務日数、手取り額は0より大きい数字を入力してください。');
+    return;
+  }
+
+  const monthlyHours = dailyHours * workdays;
+  const hourly = takehome / monthlyHours;
+  hourlyWageAnswer.textContent = `約${yen.format(Math.round(hourly))}円 / 時間`;
+  hourlyWageDetail.textContent = `1か月の労働時間：${oneDecimal.format(monthlyHours)}時間（${oneDecimal.format(dailyHours)}時間 × ${yen.format(workdays)}日）`;
+  hourlyWageResult.hidden = false;
+  hourlyWageResult.scrollIntoView({ block: 'nearest' });
+});
+
+// ---------- 4. month survival ----------
+const cashForm = document.querySelector('#month-survival-form');
+const cashMonth = document.querySelector('#cash-month');
+const cashflowList = document.querySelector('#cashflow-list');
+const addCashflowButton = document.querySelector('#add-cashflow');
+const cashResult = document.querySelector('#cash-result');
+const cashResultTitle = document.querySelector('#cash-result-title');
+const cashResultSummary = document.querySelector('#cash-result-summary');
+const cashResultList = document.querySelector('#cash-result-list');
+
+cashMonth.value = currentMonthValue();
+
+function createCashflowRow(data = {}) {
+  const row = document.createElement('div');
+  row.className = 'cashflow-row';
+  row.innerHTML = `
+    <input class="cash-name" type="text" aria-label="予定名" placeholder="カード支払い" value="${escapeHtml(data.name ?? '')}">
+    <input class="cash-date" type="date" aria-label="日付" value="${escapeHtml(data.date ?? monthDate(cashMonth.value, 25))}">
+    <select class="cash-type" aria-label="入出金">
+      <option value="expense" ${data.type !== 'income' ? 'selected' : ''}>支出</option>
+      <option value="income" ${data.type === 'income' ? 'selected' : ''}>収入</option>
+    </select>
+    <input class="cash-amount" type="number" min="0" step="1" aria-label="金額" placeholder="10000" value="${escapeHtml(data.amount ?? '')}">
+    <button class="remove-cashflow" type="button" aria-label="この予定を削除">×</button>
+  `;
+
+  row.querySelector('.remove-cashflow').addEventListener('click', () => {
+    if (cashflowList.children.length > 1) row.remove();
+  });
+
+  cashflowList.appendChild(row);
+}
+
+function resetDefaultCashflows() {
+  cashflowList.innerHTML = '';
+  createCashflowRow({ name: '給料', date: monthDate(cashMonth.value, 25), type: 'income', amount: '250000' });
+  createCashflowRow({ name: 'カード支払い', date: monthDate(cashMonth.value, 27), type: 'expense', amount: '120000' });
+  createCashflowRow({ name: '家賃', date: monthDate(cashMonth.value, 28), type: 'expense', amount: '80000' });
+}
+
+resetDefaultCashflows();
+addCashflowButton.addEventListener('click', () => createCashflowRow({ date: monthDate(cashMonth.value, 25) }));
+
+cashMonth.addEventListener('change', () => {
+  [...cashflowList.querySelectorAll('.cash-date')].forEach((input) => {
+    const day = Number(input.value.slice(-2)) || 25;
+    input.value = monthDate(cashMonth.value, day);
+  });
+});
+
+function formatShortDate(dateString) {
+  const [, month, day] = dateString.split('-');
+  return `${Number(month)}/${Number(day)}`;
+}
+
+cashForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const currentBalance = Math.round(Number(document.querySelector('#current-balance').value));
+  if (Number.isNaN(currentBalance)) {
+    alert('現在の残高を入力してください。');
+    return;
+  }
+
+  const rows = [...cashflowList.querySelectorAll('.cashflow-row')];
+  const entries = rows.map((row, index) => {
+    const rawAmount = row.querySelector('.cash-amount').value.trim();
+    return {
+      index,
+      name: row.querySelector('.cash-name').value.trim(),
+      date: row.querySelector('.cash-date').value,
+      type: row.querySelector('.cash-type').value,
+      rawAmount,
+      amount: rawAmount === '' ? NaN : Math.round(Number(rawAmount)),
+    };
+  }).filter((entry) => entry.name || entry.rawAmount);
+
+  for (const entry of entries) {
+    if (!entry.name || !entry.date || !(entry.amount >= 0)) {
+      alert('予定名・日付・金額を確認してください。');
+      return;
+    }
+    if (!entry.date.startsWith(`${cashMonth.value}-`)) {
+      alert('入出金予定の日付は対象月の中で入力してください。');
+      return;
+    }
+  }
+
+  entries.sort((a, b) => a.date.localeCompare(b.date) || a.index - b.index);
+
+  let balance = currentBalance;
+  let minBalance = currentBalance;
+  let firstNegative = currentBalance < 0 ? { current: true, balance: currentBalance } : null;
+  const timeline = [];
+
+  entries.forEach((entry) => {
+    const signed = entry.type === 'income' ? entry.amount : -entry.amount;
+    balance += signed;
+    minBalance = Math.min(minBalance, balance);
+    if (!firstNegative && balance < 0) firstNegative = { ...entry, balance };
+    timeline.push({ ...entry, signed, balance });
+  });
+
+  const minimumNeeded = Math.max(0, -minBalance);
+  if (firstNegative?.current) {
+    cashResultTitle.textContent = '現在すでに残高不足です。';
+    cashResultSummary.textContent = `現在${yen.format(Math.abs(firstNegative.balance))}円不足しています。今月を乗り切るには、あと最低${yen.format(minimumNeeded)}円必要です。`;
+  } else if (firstNegative) {
+    const [, month, day] = firstNegative.date.split('-').map(Number);
+    cashResultTitle.textContent = `${month}月${day}日に残高不足になります。`;
+    cashResultSummary.textContent = `その時点で${yen.format(Math.abs(firstNegative.balance))}円不足します。今月を乗り切るには、あと最低${yen.format(minimumNeeded)}円必要です。`;
+  } else {
+    cashResultTitle.textContent = '今月はもちます。';
+    cashResultSummary.textContent = `予定をすべて反映しても、残高は最低${yen.format(minBalance)}円です。月末時点では${yen.format(balance)}円残ります。`;
+  }
+
+  cashResultList.innerHTML = '';
+  timeline.forEach((entry) => {
+    const row = document.createElement('div');
+    row.className = 'cash-result-row';
+    const signedText = `${entry.signed >= 0 ? '+' : '-'}${yen.format(Math.abs(entry.signed))}円`;
+    row.innerHTML = `<span>${formatShortDate(entry.date)}</span><span>${escapeHtml(entry.name)} ${signedText}</span><strong class="${entry.balance < 0 ? 'negative' : ''}">${yen.format(entry.balance)}円</strong>`;
+    cashResultList.appendChild(row);
+  });
+
+  cashResult.hidden = false;
+  cashResult.scrollIntoView({ block: 'nearest' });
+});
+
+// ---------- 5. work to buy ----------
 const workToBuyForm = document.querySelector('#work-to-buy-form');
 const workResult = document.querySelector('#work-result');
 const workResultText = document.querySelector('#work-result-text');
@@ -207,7 +584,7 @@ workToBuyForm.addEventListener('submit', (event) => {
   event.preventDefault();
 
   const price = Number(document.querySelector('#item-price').value);
-  const hourlyWage = Number(document.querySelector('#hourly-wage').value);
+  const hourlyWage = Number(document.querySelector('#hourly-wage-input').value);
   const dailyHours = Number(document.querySelector('#daily-hours').value);
 
   if (!(price > 0) || !(hourlyWage > 0) || !(dailyHours > 0)) {
