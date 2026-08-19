@@ -458,13 +458,13 @@ function createCashflowRow(data = {}) {
   const row = document.createElement('div');
   row.className = 'cashflow-row';
   row.innerHTML = `
-    <input class="cash-name" type="text" aria-label="予定名" placeholder="カード支払い" value="${escapeHtml(data.name ?? '')}">
-    <input class="cash-date" type="date" aria-label="日付" value="${escapeHtml(data.date ?? monthDate(cashMonth.value, 25))}">
-    <select class="cash-type" aria-label="入出金">
-      <option value="expense" ${data.type !== 'income' ? 'selected' : ''}>支出</option>
-      <option value="income" ${data.type === 'income' ? 'selected' : ''}>収入</option>
+    <input class="cash-day" type="number" min="1" max="31" step="1" inputmode="numeric" aria-label="日" placeholder="20" value="${escapeHtml(data.day ?? '')}">
+    <input class="cash-name" type="text" aria-label="名称" placeholder="給料" value="${escapeHtml(data.name ?? '')}">
+    <select class="cash-sign" aria-label="プラスまたはマイナス">
+      <option value="income" ${data.type === 'income' ? 'selected' : ''}>＋</option>
+      <option value="expense" ${data.type !== 'income' ? 'selected' : ''}>−</option>
     </select>
-    <input class="cash-amount" type="number" min="0" step="1" aria-label="金額" placeholder="10000" value="${escapeHtml(data.amount ?? '')}">
+    <input class="cash-amount" type="number" min="0" step="1" inputmode="numeric" aria-label="金額" placeholder="250000" value="${escapeHtml(data.amount ?? '')}">
     <button class="remove-cashflow" type="button" aria-label="この予定を削除">×</button>
   `;
 
@@ -477,20 +477,21 @@ function createCashflowRow(data = {}) {
 
 function resetDefaultCashflows() {
   cashflowList.innerHTML = '';
-  createCashflowRow({ name: '給料', date: monthDate(cashMonth.value, 25), type: 'income', amount: '250000' });
-  createCashflowRow({ name: 'カード支払い', date: monthDate(cashMonth.value, 27), type: 'expense', amount: '120000' });
-  createCashflowRow({ name: '家賃', date: monthDate(cashMonth.value, 28), type: 'expense', amount: '80000' });
+  createCashflowRow({ day: '20', name: '給料', type: 'income', amount: '250000' });
+  createCashflowRow({ day: '27', name: 'カード', type: 'expense', amount: '150000' });
 }
 
 resetDefaultCashflows();
-addCashflowButton.addEventListener('click', () => createCashflowRow({ date: monthDate(cashMonth.value, 25) }));
+addCashflowButton.addEventListener('click', () => createCashflowRow());
 
-cashMonth.addEventListener('change', () => {
-  [...cashflowList.querySelectorAll('.cash-date')].forEach((input) => {
-    const day = Number(input.value.slice(-2)) || 25;
-    input.value = monthDate(cashMonth.value, day);
-  });
-});
+function daysInSelectedMonth() {
+  const [year, month] = cashMonth.value.split('-').map(Number);
+  return new Date(year, month, 0).getDate();
+}
+
+function cashDateFromDay(day) {
+  return monthDate(cashMonth.value, day);
+}
 
 function formatShortDate(dateString) {
   const [, month, day] = dateString.split('-');
@@ -510,26 +511,24 @@ cashForm.addEventListener('submit', (event) => {
     const rawAmount = row.querySelector('.cash-amount').value.trim();
     return {
       index,
+      day: Number(row.querySelector('.cash-day').value),
       name: row.querySelector('.cash-name').value.trim(),
-      date: row.querySelector('.cash-date').value,
-      type: row.querySelector('.cash-type').value,
+      type: row.querySelector('.cash-sign').value,
       rawAmount,
       amount: rawAmount === '' ? NaN : Math.round(Number(rawAmount)),
     };
   }).filter((entry) => entry.name || entry.rawAmount);
 
+  const lastDay = daysInSelectedMonth();
   for (const entry of entries) {
-    if (!entry.name || !entry.date || !(entry.amount >= 0)) {
-      alert('予定名・日付・金額を確認してください。');
+    if (!entry.name || !Number.isInteger(entry.day) || entry.day < 1 || entry.day > lastDay || !(entry.amount >= 0)) {
+      alert(`日付は1〜${lastDay}日、名称と金額も入力してください。`);
       return;
     }
-    if (!entry.date.startsWith(`${cashMonth.value}-`)) {
-      alert('入出金予定の日付は対象月の中で入力してください。');
-      return;
-    }
+    entry.date = cashDateFromDay(entry.day);
   }
 
-  entries.sort((a, b) => a.date.localeCompare(b.date) || a.index - b.index);
+  entries.sort((a, b) => a.day - b.day || a.index - b.index);
 
   let balance = currentBalance;
   let minBalance = currentBalance;

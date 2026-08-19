@@ -164,9 +164,14 @@
           <strong>今後の入出金予定</strong>
           <button id="add-cashflow" class="link-button" type="button">＋ 予定を追加</button>
         </div>
-        <div id="cashflow-list" class="cashflow-list"></div>
-        <p class="hint">給料・カード・家賃・飲み会など、分かっている予定だけ入れればOKです。</p>
-        <button class="submit" type="submit">今月もつか確認する</button>
+        <div class="cashflow-table" aria-label="今後の入出金予定">
+          <div class="cashflow-header" aria-hidden="true">
+            <span>日</span><span>名称</span><span>＋/−</span><span>金額</span><span></span>
+          </div>
+          <div id="cashflow-list" class="cashflow-list"></div>
+        </div>
+        <p class="hint">例：20 / 給料 / ＋ / 250000　　27 / カード / − / 150000</p>
+        <button class="submit" type="submit">確認する</button>
       </form>
 
       <section id="cash-result" class="result" hidden aria-live="polite">

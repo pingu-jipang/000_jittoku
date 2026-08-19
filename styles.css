@@ -8,6 +8,10 @@
 }
 
 * { box-sizing: border-box; }
+html { width: 100%; overflow-x: hidden; }
+body { width: 100%; overflow-x: hidden; }
+img, svg { max-width: 100%; }
+input, select, button { min-width: 0; }
 body {
   margin: 0;
   color: var(--text);
@@ -18,7 +22,7 @@ body {
 button, input, select { font: inherit; }
 button { cursor: pointer; }
 a { color: inherit; }
-.wrap { width: min(720px, calc(100% - 32px)); margin: 0 auto; }
+.wrap { width: min(720px, calc(100% - 32px)); max-width: 100%; margin: 0 auto; }
 
 header { border-bottom: 1px solid var(--line); }
 .topbar {
@@ -222,17 +226,28 @@ label > span { display: block; margin-bottom: 6px; }
 .party-participants label { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; }
 .party-participants input { margin: 0; }
 
-.cashflow-list { border-top: 1px solid var(--line); }
+.cashflow-table { border-top: 1px solid var(--line); }
+.cashflow-header,
 .cashflow-row {
   display: grid;
-  grid-template-columns: 1.2fr 1fr .8fr .8fr 32px;
-  border-bottom: 1px solid var(--line);
+  grid-template-columns: 54px minmax(0, 1fr) 58px minmax(92px, .9fr) 32px;
 }
+.cashflow-header {
+  min-height: 30px;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  color: var(--sub);
+  font-size: 11px;
+}
+.cashflow-header span { padding: 0 7px; }
+.cashflow-list { border: 0; }
+.cashflow-row { border-bottom: 1px solid var(--line); }
 .cashflow-row input,
 .cashflow-row select {
   width: 100%;
+  min-width: 0;
   height: 46px;
-  padding: 0 8px;
+  padding: 0 7px;
   border: 0;
   border-right: 1px solid var(--line);
   border-radius: 0;
@@ -241,6 +256,9 @@ label > span { display: block; margin-bottom: 6px; }
 }
 .cashflow-row input:focus,
 .cashflow-row select:focus { background: var(--soft); }
+.cash-day { text-align: center; font-variant-numeric: tabular-nums; }
+.cash-sign { text-align: center; font-weight: 800; }
+.cash-amount { font-variant-numeric: tabular-nums; }
 .cash-result-list { margin-top: 18px; border-top: 1px solid var(--line); }
 .cash-result-row {
   min-height: 44px;
@@ -269,21 +287,17 @@ footer .wrap { min-height: 64px; display: flex; align-items: center; }
   .two-col { grid-template-columns: 1fr; }
   .party-card-head { grid-template-columns: 1fr 1fr 32px; }
   .party-card-body { grid-template-columns: 1fr; }
-  .cashflow-row {
-    padding: 10px 0;
-    grid-template-columns: 1fr 1fr 32px;
-    gap: 8px;
-  }
-  .cashflow-row input,
-  .cashflow-row select { border: 1px solid var(--line); }
-  .cashflow-row .cash-name { grid-column: 1 / -2; }
-  .cashflow-row .cash-date { grid-column: 1 / 2; }
-  .cashflow-row .cash-type { grid-column: 2 / 3; }
-  .cashflow-row .cash-amount { grid-column: 1 / 3; }
-  .remove-cashflow { grid-column: 3 / 4; grid-row: 1 / 4; }
 }
 
 @media (max-width: 520px) {
+  .wrap { width: calc(100% - 24px); }
+  .cashflow-header,
+  .cashflow-row { grid-template-columns: 40px minmax(0, 1fr) 48px 92px 28px; }
+  .cashflow-header span,
+  .cashflow-row input,
+  .cashflow-row select { padding-left: 5px; padding-right: 5px; }
+  .remove-cashflow { font-size: 18px; padding: 0; }
+
   .topbar span { display: none; }
   .intro { padding: 48px 0 44px; }
   .tools { padding-bottom: 56px; }
