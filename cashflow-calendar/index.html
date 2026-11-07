@@ -2,83 +2,72 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#ffffff">
   <meta name="robots" content="index,follow">
-  <meta name="description" content="入金・出金の予定を登録するだけ。未来の現金残高を月ごとに自動計算。">
-  <title>資金繰りカレンダー | ジットク</title>
+  <meta name="description" content="人・口座ごとの残高と入出金予定を入力するだけ。日付ごとの資金繰りをカレンダーで簡単に確認。">
+  <title>資金繰りカレンダー｜毎日の残高と不足額を確認｜ジットク</title>
+  <link rel="stylesheet" href="../styles.css">
   <link rel="stylesheet" href="./assets/style.css">
   <script type="module" src="./src/app.mjs"></script>
 </head>
 <body>
-  <div class="app-shell">
-    <header class="header">
-      <a class="brand" href="../" aria-label="ジットクのトップへ">ジットク</a>
-      <div class="header-links"><span class="tagline">電卓はめんどう、Excelはおおげさ。</span><button class="subtle-button" type="button" id="open-settings" aria-label="設定とデータ管理を開く">⚙ 設定</button></div>
-    </header>
-    <main>
-      <a class="back-to-tools" href="../">← ツール一覧</a>
-      <div class="intro"><div class="eyebrow">未来のお金を、ひと目で。</div><h1>資金繰りカレンダー</h1><p>入金・出金の予定を登録するだけ。未来の現金残高を月ごとに自動計算。</p></div>
-      <div class="scope-picker" role="group" aria-label="表示する対象者">
-        <button type="button" class="scope active" data-scope="all" aria-pressed="true">ふたり合計</button>
-        <button type="button" class="scope" data-scope="0" aria-pressed="false" id="scope-person-0">オレ</button>
-        <button type="button" class="scope" data-scope="1" aria-pressed="false" id="scope-person-1">ミク</button>
-      </div>
-      <section class="section focus" aria-label="月別キャッシュフロー">
-        <div class="section-heading"><h2>選択した月の見通し</h2><div class="month-nav"><button type="button" class="nav-icon" id="prev-month" aria-label="前月">‹</button><span id="focus-month-label" class="month-title">--</span><button type="button" class="nav-icon" id="next-month" aria-label="翌月">›</button></div></div>
-        <div id="notice" aria-live="polite" class="notice" hidden></div>
-        <div class="balance-card"><span class="small-label">月末の予想残高</span><div id="focus-closing" class="big-number">未確定</div><div id="focus-status" class="balance-message">期首残高を設定すると、ここに予測が表示されます。</div></div>
-        <div class="stats-grid"><div class="stat"><span>月初残高</span><strong id="focus-opening">未確定</strong></div><div class="stat"><span>入金</span><strong id="focus-income" class="positive">0円</strong></div><div class="stat"><span>出金</span><strong id="focus-expense" class="expense">0円</strong></div><div class="stat"><span>当月収支</span><strong id="focus-net">0円</strong></div></div>
-        <div class="entries-head"><h3>この月の予定 <small id="entry-count"></small></h3><button type="button" id="add-inline" class="inline-action">＋ 登録する</button></div>
-        <div id="entry-list" class="entry-list"></div>
-      </section>
-      <section class="section chart-section" aria-labelledby="trend-title">
-        <div class="section-heading"><h2 id="trend-title">残高の推移</h2><span id="chart-year" class="muted"></span></div>
-        <div id="chart" class="chart" role="img" aria-label="月末残高の推移"></div>
-        <div id="chart-message" class="chart-message"></div>
-      </section>
-      <section class="section" aria-labelledby="calendar-title">
-        <div class="section-heading"><h2 id="calendar-title">月ごとの資金繰り</h2><div class="year-nav"><button type="button" class="nav-icon" id="prev-year" aria-label="前年">‹</button><span id="year-label">--年</span><button type="button" class="nav-icon" id="next-year" aria-label="翌年">›</button></div></div>
-        <div id="calendar-list" class="calendar-list"></div>
-        <p class="footnote">月単位の予測です。同じ月の中で入金と支払いのどちらが先かは判定しません。</p>
-      </section>
-      <footer class="footer"><p>データはこのブラウザ内にのみ保存します。他の端末とは自動同期されず、閲覧データを削除すると失われる場合があります。CSVでバックアップできます。</p><a href="../">← ジットクのトップへ</a></footer>
-    </main>
-  </div>
-  <button id="add-fab" class="fab" type="button">＋ 追加する</button>
+  <header><div class="wrap topbar"><a class="logo" href="../">ジットク</a><span>電卓はめんどう、Excelはおおげさ。</span></div></header>
+  <main class="wrap cc-page">
+    <a class="cc-back" href="../">← ツール一覧</a>
+    <div class="cc-intro">
+      <h1>資金繰りカレンダー</h1>
+      <p>残高と入出金予定を入れて、「確認する」を押すだけ。<br>お金が足りる日・足りない日をカレンダーで表示します。</p>
+    </div>
 
-  <dialog id="entry-dialog" class="sheet" aria-labelledby="entry-dialog-title">
-    <form id="entry-form" novalidate>
-      <div class="dialog-head"><h2 id="entry-dialog-title">予定を追加</h2><button class="close" type="button" data-close="entry-dialog" aria-label="閉じる">✕</button></div>
-      <div class="dialog-content">
-        <label class="field-label">対象者</label><div class="toggle-group" role="group" aria-label="対象者"><button type="button" id="entry-person-0" class="toggle selected" data-person="0">オレ</button><button type="button" id="entry-person-1" class="toggle" data-person="1">ミク</button></div>
-        <label class="field-label">入金・出金</label><div class="toggle-group" role="group" aria-label="入金または出金"><button type="button" class="toggle selected" data-sign="+">＋ 入金</button><button type="button" class="toggle" data-sign="-">－ 出金</button></div>
-        <label class="field-label" for="entry-amount">金額</label><div class="money-input"><input id="entry-amount" name="amount" type="text" inputmode="numeric" autocomplete="off" placeholder="300000" required aria-describedby="amount-hint"><span>円</span></div><div class="hint" id="amount-hint">円単位で入力（カンマなしでもOK）</div>
-        <label class="field-label" for="entry-name">名称</label><input id="entry-name" name="name" type="text" maxlength="100" placeholder="給与、家賃、式場代など" autocomplete="off" required>
-        <label class="field-label" for="entry-month">開始年月</label><input id="entry-month" name="month" type="month" required>
-        <div class="repeat-switch"><div><strong>毎月繰り返す</strong><div class="hint">給与や家賃などに</div></div><label class="switch"><input id="entry-repeat" type="checkbox"><span class="switch-track"></span></label></div>
-        <div id="repeat-end-field" hidden><label class="field-label" for="entry-end">終了年月</label><input type="month" id="entry-end" name="end"></div>
-        <p id="entry-error" class="form-error" role="alert" hidden></p>
-      </div>
-      <div class="dialog-foot"><button id="entry-delete" type="button" class="danger-link" hidden>削除</button><button type="submit" class="primary">登録する</button></div>
-    </form>
-  </dialog>
+    <form id="cc-form" novalidate>
+      <section class="cc-section" aria-labelledby="cc-heading-users">
+        <div class="cc-heading"><span class="cc-step" aria-hidden="true">1</span><div><h2 id="cc-heading-users">ユーザー・口座を入力</h2><p>誰のお金かを分けて管理できます。</p></div></div>
+        <div id="cc-accounts" class="cc-account-list"></div>
+        <button type="button" id="cc-add-account" class="cc-add">＋ ユーザー・口座を追加</button>
+      </section>
 
-  <dialog id="settings-dialog" class="sheet" aria-labelledby="settings-dialog-title">
-    <form id="settings-form" novalidate>
-      <div class="dialog-head"><h2 id="settings-dialog-title">設定・データ管理</h2><button class="close" type="button" data-close="settings-dialog" aria-label="閉じる">✕</button></div>
-      <div class="dialog-content">
-        <h3 class="settings-heading">対象者の名前</h3><div class="two-cols"><div><label class="field-label" for="setting-name-0">対象者 1</label><input id="setting-name-0" maxlength="30" required></div><div><label class="field-label" for="setting-name-1">対象者 2</label><input id="setting-name-1" maxlength="30" required></div></div>
-        <h3 class="settings-heading">期首現金残高</h3><p class="hint">その月の取引が始まる前にある現金残高です。未入力でも収支は計算できます。</p>
-        <div class="opening-row"><h4 id="setting-person-title-0">オレ</h4><div class="two-cols"><div><label class="field-label" for="setting-month-0">期首年月</label><input id="setting-month-0" type="month"></div><div><label class="field-label" for="setting-amount-0">期首残高（円）</label><input id="setting-amount-0" type="text" inputmode="numeric" placeholder="例：500000"></div></div></div>
-        <div class="opening-row"><h4 id="setting-person-title-1">ミク</h4><div class="two-cols"><div><label class="field-label" for="setting-month-1">期首年月</label><input id="setting-month-1" type="month"></div><div><label class="field-label" for="setting-amount-1">期首残高（円）</label><input id="setting-amount-1" type="text" inputmode="numeric" placeholder="例：200000"></div></div></div>
-        <p id="settings-error" class="form-error" role="alert" hidden></p>
-        <h3 class="settings-heading">バックアップ</h3><div class="data-actions"><button id="export-btn" type="button" class="outline-button">CSVを書き出す</button><button id="import-btn" type="button" class="outline-button">CSVを読み込む</button><input id="import-file" type="file" accept=".csv,text/csv" hidden></div><p class="hint">書き出したCSVには定期設定・期首残高・名前も含まれます。取り込み時は既存データを置き換えます。</p>
-        <button id="clear-all" type="button" class="danger-link clear-all">すべてのデータを削除</button>
-      </div>
-      <div class="dialog-foot"><button class="primary" type="submit">設定を保存</button></div>
+      <section class="cc-section" aria-labelledby="cc-heading-opening">
+        <div class="cc-heading"><span class="cc-step" aria-hidden="true">2</span><div><h2 id="cc-heading-opening">それぞれの残高を入力</h2><p>いつ時点で、いくらある？</p></div></div>
+        <div id="cc-opening" class="cc-opening-list"></div>
+        <p class="cc-hint">基準日の残高は、その日の予定がまだ反映されていない金額として計算します。計上済みの入出金は二重に登録しないでください。</p>
+      </section>
+
+      <section class="cc-section" aria-labelledby="cc-heading-entries">
+        <div class="cc-heading"><span class="cc-step" aria-hidden="true">3</span><div><h2 id="cc-heading-entries">これからの入出金を入力</h2><p>給料・家賃・カードの支払い・式場代など。</p></div></div>
+        <div id="cc-entries" class="cc-entries"></div>
+        <button type="button" id="cc-add-entry" class="cc-add">＋ 予定を追加</button>
+      </section>
+
+      <p id="cc-error" class="cc-error" role="alert" hidden></p>
+      <button id="cc-check" class="cc-submit" type="submit">カレンダーで確認する</button>
+      <p class="cc-save-hint">入力内容はこのブラウザに自動保存されます。</p>
     </form>
-  </dialog>
-  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+    <section id="cc-result" class="cc-result" aria-labelledby="cc-result-heading" hidden>
+      <div class="cc-result-heading"><span class="cc-step cc-step-result" aria-hidden="true">4</span><div><h2 id="cc-result-heading">日別の資金繰り</h2><p>日付を押すと、金額の詳細が見られます。</p></div></div>
+      <div class="cc-result-controls">
+        <label class="cc-scope-label"><span>表示対象</span><select id="cc-scope" aria-label="表示するユーザー・口座"><option value="all">全体合計</option></select></label>
+        <div class="cc-month-group" aria-label="表示する月">
+          <button type="button" id="cc-prev" aria-label="前の月">‹</button>
+          <input type="month" id="cc-month" aria-label="カレンダーの表示年月" min="1900-01" max="2200-12">
+          <button type="button" id="cc-next" aria-label="次の月">›</button>
+        </div>
+      </div>
+      <div id="cc-month-message" class="cc-month-message" role="status" aria-live="polite"></div>
+      <div class="cc-weekdays" aria-hidden="true"><span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span></div>
+      <div id="cc-calendar" class="cc-calendar" role="group" aria-label="日別残高カレンダー"></div>
+      <p class="cc-hint cc-calendar-hint">緑＝残高0円以上／赤＝残高不足。カレンダー内の「万・億」表記は概算です。日付を押すと正確な金額が表示されます。</p>
+      <div id="cc-day-detail" class="cc-day-detail" aria-live="polite"></div>
+    </section>
+
+    <details class="cc-backup">
+      <summary>データのバックアップ</summary>
+      <p>この端末のブラウザに保存されます。他の端末とは自動同期されません。機種変更などに備えてバックアップしてください。前の月単位版のデータは、日付情報がないため自動移行せず、旧形式のままブラウザに残しています。</p>
+      <div class="cc-backup-actions"><button type="button" id="cc-export">データを書き出す</button><button type="button" id="cc-import">データを読み込む</button><input type="file" id="cc-import-file" accept=".json,application/json" hidden></div>
+      <p id="cc-backup-note" role="status" aria-live="polite"></p>
+    </details>
+  </main>
+  <footer><div class="wrap">ジットク</div></footer>
 </body>
 </html>
