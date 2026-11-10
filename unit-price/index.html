@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="食品や日用品の価格を100g・1Lあたりの単価に換算し、2商品を比較。g・kg・mL・Lに対応する無料ツールです。">
+  <meta name="robots" content="index,follow">
+  <title>100g・1Lあたりの単価比較｜ジットク</title>
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <header><div class="wrap topbar"><a class="logo" href="../">ジットク</a><span>電卓はめんどう、Excelはおおげさ。</span></div></header>
+  <main class="wrap tool-page">
+    <a class="back-link" href="../">← ツール一覧</a>
+    <section class="tools" aria-labelledby="tools-title">
+      <h2 id="tools-title">ツール</h2>
+      <label class="tool-search"><span class="sr-only">ツールを検索</span><input id="tool-search" type="search" placeholder="ツールを検索（例：レシピ）" autocomplete="off"></label>
+      <div class="tool-list"><a class="tool-row" href="../warikan/" data-search="かんたん割り勘 精算 飲み会 立替 1次会 2次会 参加者"><strong>かんたん割り勘</strong><span>使う →</span></a>
+        <a class="tool-row" href="../recipe/" data-search="レシピ倍率変換 料理 人数 食材 分量 何人前"><strong>レシピ倍率変換</strong><span>使う →</span></a>
+        <a class="tool-row current" href="../unit-price/" data-search="単価比較 単位あたり 100g 1L グラム ミリリットル kg 安い 値段"><strong>単価比較</strong><span>表示中</span></a>
+        <a class="tool-row" href="../hourly-wage/" data-search="時給換算 給料 月給 手取り 労働時間 実質時給"><strong>時給換算</strong><span>使う →</span></a>
+        <a class="tool-row" href="../cashflow/" data-search="今月お金足りる お金 足りる 今月もつ 口座 残高 家計 給料 カード 家賃 支払い"><strong>今月お金足りる？</strong><span>使う →</span></a>
+        <a class="tool-row" href="../work-to-buy/" data-search="何日働けば買える 価格 時給 労働 欲しいもの 買える"><strong>何日働けば買える？</strong><span>使う →</span></a>
+        <a class="tool-row" href="../character-count/" data-search="文字数カウント 文字数 文字 カウント テキスト 文章"><strong>文字数カウント</strong><span>使う →</span></a></div>
+      <p id="tool-search-empty" class="tool-search-empty" hidden>該当するツールはありません。</p>
+    </section>
+    
+    <section class="calculator">
+      <div class="section-title"><h1>単価比較</h1><p>2つの商品を100gまたは1Lあたりの値段で比較します。</p></div>
+      <form id="unit-price-form">
+        <div class="compare-item"><h2>商品A</h2><div class="field-grid compare-grid">
+          <label><span>値段</span><div class="unit-input"><input id="price-a" type="number" min="0" step="any" inputmode="decimal" value="298" required><span>円</span></div></label>
+          <label><span>内容量</span><input class="text-input" id="quantity-a" type="number" min="0.000001" step="any" inputmode="decimal" value="300" required></label>
+          <label><span>単位</span><select id="unit-a"><option value="g">g</option><option value="kg">kg</option><option value="ml">mL</option><option value="l">L</option></select></label>
+        </div></div>
+        <div class="compare-item"><h2>商品B</h2><div class="field-grid compare-grid">
+          <label><span>値段</span><div class="unit-input"><input id="price-b" type="number" min="0" step="any" inputmode="decimal" value="398" required><span>円</span></div></label>
+          <label><span>内容量</span><input class="text-input" id="quantity-b" type="number" min="0.000001" step="any" inputmode="decimal" value="500" required></label>
+          <label><span>単位</span><select id="unit-b"><option value="g">g</option><option value="kg">kg</option><option value="ml">mL</option><option value="l">L</option></select></label>
+        </div></div>
+        <p id="unit-price-error" class="hint" role="alert" hidden></p>
+        <button class="submit" type="submit">比較する</button>
+      </form>
+      <section id="unit-price-result" class="result" hidden aria-live="polite"><h3 id="unit-price-answer"></h3><div id="unit-price-rows"></div><p class="hint" id="unit-price-note"></p></section>
+    </section>
+  </main>
+  <footer><div class="wrap">ジットク</div></footer>
+  <script src="../app.js" defer></script>
+  <script src="./app.js" defer></script>
+</body>
+</html>
