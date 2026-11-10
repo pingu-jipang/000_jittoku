@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="電卓では面倒、Excelでは大げさな日常の計算を、入力するだけですぐ終わらせる無料Webツール集。割り勘、レシピ倍率、実質時給、今月の残高、必要労働日数を計算できます。">
+  <meta name="description" content="割り勘、レシピの人数変更、100g・1Lあたりの単価比較、文字数カウントなど、日常のちょっと面倒な計算を無料で。">
   <meta name="robots" content="index,follow">
   <title>ジットク｜ちょっとした計算を、すぐ終わらせる。</title>
   <link rel="stylesheet" href="styles.css">
@@ -13,19 +13,18 @@
   <main class="wrap">
     <section class="intro">
       <h1>ちょっとした計算を、<br>すぐ終わらせる。</h1>
-      <p>知りたいことを入れるだけ。計算式は考えなくていい。</p>
     </section>
     <section class="tools" aria-labelledby="tools-title">
       <h2 id="tools-title">ツール</h2>
       <label class="tool-search"><span class="sr-only">ツールを検索</span><input id="tool-search" type="search" placeholder="ツールを検索（例：レシピ）" autocomplete="off"></label>
       <div class="tool-list"><a class="tool-row" href="./warikan/" data-search="かんたん割り勘 精算 飲み会 立替 1次会 2次会 参加者"><strong>かんたん割り勘</strong><span>使う →</span></a>
         <a class="tool-row" href="./recipe/" data-search="レシピ倍率変換 料理 人数 食材 分量 何人前"><strong>レシピ倍率変換</strong><span>使う →</span></a>
+        <a class="tool-row" href="./unit-price/" data-search="単価比較 単位あたり 100g 1L グラム ミリリットル kg 安い 値段"><strong>単価比較</strong><span>使う →</span></a>
         <a class="tool-row" href="./hourly-wage/" data-search="時給換算 給料 月給 手取り 労働時間 実質時給"><strong>時給換算</strong><span>使う →</span></a>
         <a class="tool-row" href="./cashflow/" data-search="今月お金足りる お金 足りる 今月もつ 口座 残高 家計 給料 カード 家賃 支払い"><strong>今月お金足りる？</strong><span>使う →</span></a>
-        <a class="tool-row" href="./cashflow-calendar/" data-search="資金繰りカレンダー 入出金 将来 予測 結婚式 引っ越し 旅行 現金残高"><strong>資金繰りカレンダー<small style="display:block;font-size:12px;font-weight:400;color:var(--sub)">残高と入出金の予定を入力。日ごとの残高と不足額をカレンダーで確認。</small></strong><span>使う →</span></a>
-        <a class="tool-row" href="./work-to-buy/" data-search="何日働けば買える 価格 時給 労働 欲しいもの 買える"><strong>何日働けば買える？</strong><span>使う →</span></a></div>
+        <a class="tool-row" href="./work-to-buy/" data-search="何日働けば買える 価格 時給 労働 欲しいもの 買える"><strong>何日働けば買える？</strong><span>使う →</span></a>
+        <a class="tool-row" href="./character-count/" data-search="文字数カウント 文字数 文字 カウント テキスト 文章"><strong>文字数カウント</strong><span>使う →</span></a></div>
       <p id="tool-search-empty" class="tool-search-empty" hidden>該当するツールはありません。</p>
-      <p class="home-note">ツールを選ぶと、その計算だけのページが開きます。</p>
     </section>
   </main>
   <footer><div class="wrap">ジットク</div></footer>
